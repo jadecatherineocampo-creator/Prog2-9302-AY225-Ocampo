@@ -1,0 +1,1 @@
+print("hindi na ako malalate")
