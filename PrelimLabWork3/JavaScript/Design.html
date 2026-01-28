@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prelim Exam Score Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+        }
+        
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .results {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .results.show {
+            display: block;
+        }
+        
+        .results h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        
+        .result-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .result-label {
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .result-value {
+            color: #333;
+            font-weight: 700;
+        }
+        
+        .remark-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            border-radius: 5px;
+        }
+        
+        .remark-box.warning {
+            background: #fff3e0;
+            border-left-color: #ff9800;
+        }
+        
+        .remark-box.danger {
+            background: #ffebee;
+            border-left-color: #f44336;
+        }
+        
+        .remark-box h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .remark-box p {
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        .required-scores {
+            margin-top: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+        }
+        
+        .score-item {
+            padding: 10px;
+            margin: 10px 0;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        
+        .score-item strong {
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Prelim Exam Score Calculator</h1>
+        
+        <div class="input-group">
+            <label for="attendance">Number of Attendances:</label>
+            <input type="number" id="attendance" min="0" max="100" required>
+        </div>
+        
+        <div class="input-group">
+            <label for="lab1">Lab Work 1 Grade:</label>
+            <input type="number" id="lab1" min="0" max="100" step="0.01" required>
+        </div>
+        
+        <div class="input-group">
+            <label for="lab2">Lab Work 2 Grade:</label>
+            <input type="number" id="lab2" min="0" max="100" step="0.01" required>
+        </div>
+        
+        <div class="input-group">
+            <label for="lab3">Lab Work 3 Grade:</label>
+            <input type="number" id="lab3" min="0" max="100" step="0.01" required>
+        </div>
+        
+        <button onclick="calculateScore()">Calculate Required Exam Score</button>
+        
+        <div id="results" class="results">
+            <h2>📈 Computation Results</h2>
+            <div id="computationResults"></div>
+            
+            <div class="required-scores">
+                <h2>🎯 Required Prelim Exam Scores</h2>
+                <div id="requiredScores"></div>
+            </div>
+            
+            <div id="remarks"></div>
+        </div>
+    </div>
+    
+    <script src="PrelimCalculator.js"></script>
+</body>
+</html>
