@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Record System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        h2 {
+            color: #555;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .form-container {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .btn-add {
+            background: #28a745;
+            color: white;
+            width: 100%;
+        }
+
+        .btn-add:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+            padding: 8px 15px;
+            font-size: 14px;
+        }
+
+        .btn-delete:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        thead {
+            background: #667eea;
+            color: white;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #ddd;
+            transition: background-color 0.2s;
+        }
+
+        tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        td {
+            padding: 12px 15px;
+        }
+
+        tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            table {
+                font-size: 14px;
+            }
+            
+            th, td {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Student Record System</h1>
+        
+        <div class="form-container">
+            <h2>Add New Student</h2>
+            <form id="studentForm">
+                <div class="form-group">
+                    <label for="studentID">ID:</label>
+                    <input type="number" id="studentID" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="studentName">Name:</label>
+                    <input type="text" id="studentName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="studentGrade">Grade:</label>
+                    <input type="number" id="studentGrade" min="0" max="100" required>
+                </div>
+                
+                <button type="submit" class="btn btn-add">Add Student</button>
+            </form>
+        </div>
+        
+        <div class="table-container">
+            <h2>Student Records</h2>
+            <table id="studentTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Grade</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Rows will be dynamically generated -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script>
+        // Hardcoded CSV data as multi-line string
+        const csvData = `ID,Name,Grade
+1,John Smith,85
+2,Emma Johnson,92
+3,Michael Williams,78
+4,Sophia Brown,95
+5,James Davis,88
+6,Olivia Miller,91
+7,William Wilson,76
+8,Ava Moore,89
+9,Robert Taylor,82
+10,Isabella Anderson,94
+11,David Thomas,87
+12,Mia Jackson,90
+13,Joseph White,79
+14,Charlotte Harris,93
+15,Charles Martin,84
+16,Amelia Thompson,86
+17,Thomas Garcia,81
+18,Harper Martinez,88
+19,Daniel Robinson,92
+20,Evelyn Clark,77`;
+
+        // Array to store student objects
+        let students = [];
+
+        // Parse CSV data into array of objects
+        function parseCSV(csvString) {
+            const lines = csvString.trim().split('\n');
+            const headers = lines[0].split(',');
+            const data = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(',');
+                const obj = {
+                    id: values[0],
+                    name: values[1],
+                    grade: values[2]
+                };
+                data.push(obj);
+            }
+            
+            return data;
+        }
+
+        // Render function to populate table
+        function render() {
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = ''; // Clear existing rows
+            
+            students.forEach((student, index) => {
+                const row = `
+                    <tr>
+                        <td>${student.id}</td>
+                        <td>${student.name}</td>
+                        <td>${student.grade}</td>
+                        <td>
+                            <button class="btn btn-delete" onclick="deleteStudent(${index})">Delete</button>
+                        </td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+        }
+
+        // Add new student
+        function addStudent(event) {
+            event.preventDefault();
+            
+            const id = document.getElementById('studentID').value;
+            const name = document.getElementById('studentName').value;
+            const grade = document.getElementById('studentGrade').value;
+            
+            // Create new student object
+            const newStudent = {
+                id: id,
+                name: name,
+                grade: grade
+            };
+            
+            // Push to array
+            students.push(newStudent);
+            
+            // Re-render table
+            render();
+            
+            // Clear form
+            document.getElementById('studentForm').reset();
+            
+            // Show success message
+            alert('Student added successfully!');
+        }
+
+        // Delete student
+        function deleteStudent(index) {
+            if (confirm('Are you sure you want to delete this record?')) {
+                students.splice(index, 1);
+                render();
+                alert('Student deleted successfully!');
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Parse CSV data
+            students = parseCSV(csvData);
+            
+            // Initial render
+            render();
+            
+            // Add form submit listener
+            document.getElementById('studentForm').addEventListener('submit', addStudent);
+        });
+    </script>
+</body>
+</html>
+```
